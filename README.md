@@ -24,6 +24,8 @@ ROS    >= Melodic. [ROS Installation](http://wiki.ros.org/ROS/Installation)
 运行relocalization相关功能需要
 `pip install open3d==0.10.0.0 `
 
+sudo apt-get install ros-noetic-base-local-planner
+
 ## 2. Build
 ```
     cd ~/$A_ROS_DIR$/src
@@ -33,7 +35,7 @@ ROS    >= Melodic. [ROS Installation](http://wiki.ros.org/ROS/Installation)
     source devel/setup.bash
 ```
 
-- 如果出现消息类型头文件找不到的情况(如robot_msg/RobotStateMsg.h)，请多编译几次，原因是此处链接的文件还没有编译，等编译好后下次就能够链接到。如果还不行，使用`catkin_make -j1`进行单线程或`catkin_make -DCATKIN_WHITELIST_PACKAGES=“robot_msg”`单独编译消息包
+- 如果出现消息类型头文件找不到的情况(如robot_msg/RobotStateMsg.h)，请多编译几次，原因是此处链接的文件还没有编译，等编译好后下次就能够链接到。如果还不行，使用`catkin_make -j1`进行单线程或`catkin_make -DCATKIN_WHITELIST_PACKAGES=“robot_msg”`单独编译消息包(如果是找不到Pose6D需使用catkin_make，单线程不行)
 
 ## 3.Directly run
 ## 3.1 文件结构

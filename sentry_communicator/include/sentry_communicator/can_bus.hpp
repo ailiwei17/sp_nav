@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include <string>
 // ros
 #include <geometry_msgs/TwistStamped.h>
@@ -8,6 +8,8 @@
 // superpower_hardware
 #include <sentry_communicator/socketcan.h>
 #include <tf/transform_broadcaster.h>
+
+#include <robot_msg/RefereeInfoMsg.h>
 
 namespace sentry_communicator
 {
@@ -40,12 +42,16 @@ namespace sentry_communicator
         const std::string bus_name_;
         can::SocketCAN socket_can_;
         ros::Subscriber cmd_chassis_sub_;
-        ros::Publisher lowercom_data_pub;
         std::mutex mutex_;
 
         geometry_msgs::Point lower_com_data;
         tf::TransformBroadcaster tf_yaw2chassis;
         
+        ros::Publisher referee_info_pub_;
+        robot_msg::RefereeInfoMsg 
+            referee_info_msg_;
+        
+        uint16_t base_HP,robot_HP,game_progress,stage_remain_time;
 
         // Lithesh : use realtime buffer to keep the multi-thread safe.
         realtime_tools::RealtimeBuffer<Command> realtime_buffer_;
@@ -53,8 +59,9 @@ namespace sentry_communicator
         // the int array used to contain data_frame, which has 8 byte
         uint8_t *can_data_;
         can_frame frame_;
+        
         uint16_t data;
-        uint16_t Robot_ID,Keyboard;
+        
     };
 
     // TODO(Lithesh) : the zero-drift should be concerned.

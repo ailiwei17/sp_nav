@@ -1,5 +1,6 @@
 #ifndef FAKE_INFO_H
 #define FAKE_INFO_H
+#include <robot_msg/RefereeInfoMsg.h>
 #include <robot_msg/MatchMsg.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>

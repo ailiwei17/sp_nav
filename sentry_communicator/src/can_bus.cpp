@@ -8,7 +8,7 @@ namespace sentry_communicator
     CanBus::CanBus(const std::string &bus_name, int thread_priority, ros::NodeHandle &root_nh)
         : bus_name_(bus_name)
     {
-        lowercom_data_pub = root_nh.advertise<geometry_msgs::Point>("referee_data",1000);
+        referee_info_pub_ = root_nh.advertise<robot_msg::RefereeInfoMsg>("referee_info",1000);
 
         while (!socket_can_.open(bus_name, boost::bind(&CanBus::frameCallback, this, _1), thread_priority) && ros::ok())
             ros::Duration(.5).sleep();
@@ -47,18 +47,25 @@ namespace sentry_communicator
     void CanBus::frameCallback(const can_frame &frame)
     {
         std::lock_guard<std::mutex> guard(mutex_);
-        if(frame.can_id == 0x1FF){
-            Robot_ID = frame.data[0];
-            Keyboard = frame.data[1];
-            data = (frame.data[2] << 8u) | frame.data[3];
-            float vel_x = uint2float(data, -30, 30, 16);
-            data = (frame.data[4] << 8u) | frame.data[5];
-            float vel_y = uint2float(data, -30, 30, 16);
-            lower_com_data.x = vel_x;
-            lower_com_data.y = vel_y;
-            lower_com_data.z = Keyboard;
+        if(frame.can_id == 0x18F){
 
-            lowercom_data_pub.publish(lower_com_data);
+            referee_info_msg_.base_HP = (uint16_t)((frame.data[0] << 8u) | frame.data[1]);
+            referee_info_msg_.robot_HP = (uint16_t)((frame.data[2] << 8u) | frame.data[3]);
+            referee_info_msg_.game_progress = frame.data[4];
+            referee_info_msg_.stage_remain_time = (uint16_t)((frame.data[5] << 8u) | frame.data[6]);
+
+            referee_info_pub_.publish(referee_info_msg_);
+
+            // Robot_ID = frame.data[0];
+            // Keyboard = frame.data[1];
+            // data = (frame.data[2] << 8u) | frame.data[3];
+            // float vel_x = uint2float(data, -30, 30, 16);
+            // data = (frame.data[4] << 8u) | frame.data[5];
+            // float vel_y = uint2float(data, -30, 30, 16);
+            // lower_com_data.x = vel_x;
+            // lower_com_data.y = vel_y;
+            // lower_com_data.z = Keyboard;
+            // lowercom_data_pub.publish(lower_com_data);
         }
     }
 
